@@ -1,9 +1,9 @@
 #ifndef WEBSERVER_H
 #define WEBSERVER_H
 
-#include <string>
-#include <vector>
 #include "request.h"
+#include <vector>
+#include <string>
 
 class Webserver {
 private:
@@ -16,14 +16,16 @@ public:
     Webserver();
     Webserver(const std::string& ip, int request_capacity);
 
-    void push(const Request& new_request);
-    void remove_dead_connections();
+    bool isIdle() const;
+    void process(long long clock_ms, std::vector<Request>& request_queue);
 
+    void remove_dead_connections(long long clock_ms);
+
+    std::string generate_random_ip();
     std::string getIp() const;
     int getRequestCapacity() const;
     int getCurrentUsage() const;
-    int getActiveClientCount() const; // <-- ADDED
-    static std::string generate_random_ip();
+    int getActiveClientCount() const;
 };
 
 #endif

@@ -21,26 +21,24 @@ Webserver::Webserver(const std::string& ip, int request_capacity) {
     this->current_usage = 0;
 }
 
-void Webserver::push(const Request& new_request) {
-    for (auto& client : active_clients) {
-        if (client.getRequestDemand() == 0) {
-            client = new_request;
-            current_usage += new_request.getRequestDemand();
-            return;
-        }
-    }
-
-    active_clients.push_back(new_request);
-    current_usage += new_request.getRequestDemand();
+bool Webserver::isIdle() const {
+    return current_usage == 0;
 }
 
-void Webserver::remove_dead_connections() {
-    long long now = std::chrono::duration_cast<std::chrono::milliseconds>(
-                        std::chrono::system_clock::now().time_since_epoch()
-                    ).count();
-    
-    for (auto it = active_clients.begin(); it != active_clients.end(); ) {
-        if (it->getExpirationTimeMs() <= now) {
+void Webserver::process(long long clock_ms, std::vector<Request>& request_queue) {
+    if (request_queue.empty()) return;
+
+    Request& r = request_queue.front();
+    if (current_usage + r.getRequestDemand() <= request_capacity) {
+        active_clients.push_back(r);
+        current_usage += r.getRequestDemand();
+        request_queue.erase(request_queue.begin());
+    }
+}
+
+void Webserver::remove_dead_connections(long long clock_ms) {
+    for (auto it = active_clients.begin(); it != active_clients.end();) {
+        if (it->getExpirationTimeMs() <= clock_ms) {
             current_usage -= it->getRequestDemand();
             it = active_clients.erase(it);
         } else {
@@ -73,5 +71,5 @@ int Webserver::getCurrentUsage() const {
 }
 
 int Webserver::getActiveClientCount() const {
-    return active_clients.size(); // <-- ADDED
+    return active_clients.size();
 }

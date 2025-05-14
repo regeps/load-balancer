@@ -2,10 +2,10 @@
 #include <random>
 #include <chrono>
 
-int generate_request_time() {
+int generate_request_time(int request_coefficient) {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> distrib(1000, 7000);
+    static std::uniform_int_distribution<> distrib(100 * request_coefficient, 700 * request_coefficient);
     return distrib(gen);
 }
 
@@ -16,28 +16,36 @@ int generate_request_demand() {
     return distrib(gen);
 }
 
-long long get_current_time_ms() {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(
-               std::chrono::system_clock::now().time_since_epoch()
-           ).count();
-}
-
-Request::Request() {
-    this->ip = generate_random_ip();
-    this->request_time_ms = generate_request_time();
+Request::Request(int request_coefficient, long long clock_ms) {
+    this->ip_in = generate_random_ip();
+    this->ip_out = generate_random_ip();
+    this->request_time_ms = generate_request_time(request_coefficient);
     this->request_demand = generate_request_demand();
-    this->expiration_time_ms = get_current_time_ms() + request_time_ms;
+    this->expiration_time_ms = clock_ms + request_time_ms;
+
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> job_type_dist(0, 1);
+    this->job_type = (job_type_dist(gen) == 0) ? 'S' : 'P';
 }
 
-Request::Request(const std::string& ip, int request_time_ms, int request_demand) {
-    this->ip = ip;
-    this->request_time_ms = request_time_ms;
-    this->request_demand = request_demand;
-    this->expiration_time_ms = get_current_time_ms() + request_time_ms;
+std::string Request::generate_random_ip() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> distrib(0, 255);
+
+    return std::to_string(distrib(gen)) + "." +
+           std::to_string(distrib(gen)) + "." +
+           std::to_string(distrib(gen)) + "." +
+           std::to_string(distrib(gen));
 }
 
-std::string Request::getIp() const {
-    return ip;
+std::string Request::getIpIn() const {
+    return ip_in;
+}
+
+std::string Request::getIpOut() const {
+    return ip_out;
 }
 
 int Request::getRequestTimeMs() const {
@@ -52,13 +60,6 @@ long long Request::getExpirationTimeMs() const {
     return expiration_time_ms;
 }
 
-std::string Request::generate_random_ip() {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> distrib(0, 255);
-
-    return std::to_string(distrib(gen)) + "." +
-           std::to_string(distrib(gen)) + "." +
-           std::to_string(distrib(gen)) + "." +
-           std::to_string(distrib(gen));
+char Request::getJobType() const {
+    return job_type;
 }

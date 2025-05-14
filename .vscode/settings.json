@@ -66,6 +66,11 @@
         "utility": "cpp",
         "numeric": "cpp",
         "random": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "deque": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "stack": "cpp",
+        "unordered_set": "cpp"
     }
 }

@@ -16,7 +16,7 @@ namespace Logger {
     const std::string WHITE = "\033[37m";
     const std::string BOLD = "\033[1m";
 
-    inline void log_status(const std::vector<Webserver>& servers, int total_requests_created, int total_requests_processed, const std::string& event = "") {
+    inline void log_status(const std::vector<Webserver>& servers, int total_requests_created, int total_requests_processed, const std::string& event = "", bool show_servers = true) {
         int total_capacity = 0;
         int total_usage = 0;
         int total_active_requests = 0;
@@ -43,25 +43,25 @@ namespace Logger {
         std::cout << "[Active: " << total_active_requests << "] ";
         std::cout << "[Processed: " << total_requests_processed << "] " << RESET;
 
-        // Per server usage with rich coloring
-        for (size_t i = 0; i < servers.size(); ++i) {
-            double server_usage_percent = (double)servers[i].getCurrentUsage() / (double)servers[i].getRequestCapacity() * 100.0;
+        if (show_servers) {
+            for (size_t i = 0; i < servers.size(); ++i) {
+                double server_usage_percent = (double)servers[i].getCurrentUsage() / (double)servers[i].getRequestCapacity() * 100.0;
 
-            if (server_usage_percent < 10.0)
-                std::cout << BLUE;        // Very light server load
-            else if (server_usage_percent < 30.0)
-                std::cout << GREEN;
-            else if (server_usage_percent < 60.0)
-                std::cout << CYAN;
-            else if (server_usage_percent < 85.0)
-                std::cout << YELLOW;
-            else
-                std::cout << RED;          // Danger zone server
+                if (server_usage_percent < 10.0)
+                    std::cout << BLUE;
+                else if (server_usage_percent < 30.0)
+                    std::cout << GREEN;
+                else if (server_usage_percent < 60.0)
+                    std::cout << CYAN;
+                else if (server_usage_percent < 85.0)
+                    std::cout << YELLOW;
+                else
+                    std::cout << RED;
 
-            std::cout << "S" << i << ":" << (int)server_usage_percent << "%" << RESET << " ";
+                std::cout << "S" << i << ":" << (int)server_usage_percent << "%" << RESET << " ";
+            }
         }
 
-        // Event logging
         if (!event.empty()) {
             std::cout << event;
         }

@@ -1,8 +1,8 @@
 #ifndef LOADBALANCER_H
 #define LOADBALANCER_H
 
-#include <vector>
 #include "webserver.h"
+#include <vector>
 
 class Loadbalancer {
 private:
@@ -12,8 +12,7 @@ public:
     Loadbalancer();
     Loadbalancer(int number_of_servers);
 
-    int push(const Request& new_request);
-    void updateServers(); // move this to public
+    void updateServers(std::vector<Request>& request_queue, long long clock_ms);
 
     std::vector<Webserver>& getServers();
 };
