@@ -1,8 +1,7 @@
 #include <string>
 #include <vector>
+#include <iostream>
 #include "webserver.h" 
-#include "client.h" 
-#include "scripts.h" 
-#include "loadbalancer.h" 
+#include "request.h" 
 
 int main();
