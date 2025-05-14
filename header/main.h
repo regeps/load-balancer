@@ -1,7 +1,8 @@
-#include <string>
-#include <vector>
-#include <iostream>
-#include "webserver.h" 
-#include "request.h" 
+#ifndef MAIN_H
+#define MAIN_H
 
-int main();
+#include <vector> // <== ADD THIS
+
+void print_summary(class Loadbalancer& lb, const std::vector<class Request>& request_queue, int iteration);
+
+#endif

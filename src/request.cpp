@@ -5,14 +5,14 @@
 int generate_request_time() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> distrib(5, 1000);
+    static std::uniform_int_distribution<> distrib(1000, 7000);
     return distrib(gen);
 }
 
 int generate_request_demand() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> distrib(100, 1000);
+    static std::uniform_int_distribution<> distrib(100, 800);
     return distrib(gen);
 }
 

@@ -22,7 +22,7 @@ public:
     std::string getIp() const;
     int getRequestCapacity() const;
     int getCurrentUsage() const;
-
+    int getActiveClientCount() const; // <-- ADDED
     static std::string generate_random_ip();
 };
 

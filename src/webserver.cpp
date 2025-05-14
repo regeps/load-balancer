@@ -5,7 +5,7 @@
 int generate_request_capacity() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> distrib(10000, 100000);
+    static std::uniform_int_distribution<> distrib(40000, 60000);
     return distrib(gen);
 }
 
@@ -70,4 +70,8 @@ int Webserver::getRequestCapacity() const {
 
 int Webserver::getCurrentUsage() const {
     return current_usage;
+}
+
+int Webserver::getActiveClientCount() const {
+    return active_clients.size(); // <-- ADDED
 }
